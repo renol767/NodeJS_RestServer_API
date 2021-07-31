@@ -36,6 +36,7 @@ app.listen(8080, () => {
     });
 })
 
+// Definisikan Schema
 /**
  * @swagger
  * components:
@@ -49,7 +50,7 @@ app.listen(8080, () => {
  *                      type: string
  */
 
-// Swagget for Get Method 'localhost:8080/'
+// Swagger for Get Method 'localhost:8080/'
 /**
  * @swagger
  * /:
@@ -65,7 +66,7 @@ app.get('/', (req, resp) => {
     resp.send('Welcome to my API using MongoDB')
 })
 
-// Swagget for GET Method 'localhost:8080/api/books'
+// Swagger for GET Method 'localhost:8080/api/books'
 /**
  * @swagger
  * /api/books:
@@ -91,7 +92,7 @@ app.get('/api/books', (req, resp) => {
     });
 });
 
-// Swagget for GET Method 'localhost:8080/api/books/:id'
+// Swagger for GET Method 'localhost:8080/api/books/:id'
 /**
  * @swagger
  * /api/books/{id}:
@@ -124,7 +125,7 @@ app.get('/api/books/:id', (req, resp) => {
     });
 });
 
-// Swagget for POST Method 'localhost:8080/api/books/addBook'
+// Swagger for POST Method 'localhost:8080/api/books/addBook'
 /**
  * @swagger
  * /api/books/addBook:
@@ -159,6 +160,37 @@ app.post('/api/books/addBook', (req, resp) => {
     });
 });
 
+// Swagger for PUT Method 'localhost:8080/api/books/:id'
+/**
+ * @swagger
+ * /api/books/{id}:
+ *  put:
+ *      summary: used to update data to MongoDB
+ *      description: This api is used to update data to MongoDB
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          description: Numeric ID required
+ *          schema:
+ *              type: integer
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#components/schemas/Book'
+ *      responses:
+ *          200:
+ *              description: Updated Successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#components/schemas/Book'
+ */
+
 // PUT Method
 app.put('/api/books/:id', (req, resp) => {
     let query = { id: parseInt(req.params.id) };
@@ -174,6 +206,25 @@ app.put('/api/books/:id', (req, resp) => {
         resp.send(book);
     });
 });
+
+// Swagger for DELETE Method 'localhost:8080/api/books/:id'
+/**
+ * @swagger
+ * /api/books/{id}:
+ *  delete:
+ *      summary: To delete book from MongoDB
+ *      description: This api is used to delete data from MongoDB
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          description: Numeric ID required
+ *          schema:
+ *              type: integer
+ *      responses:
+ *          200:
+ *              description: data is Deleted
+ */
 
 // DELETE Method
 app.delete('/api/books/:id', (req, resp) => {
