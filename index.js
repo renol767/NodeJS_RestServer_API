@@ -2,9 +2,30 @@ const express = require("express");
 const MongoClient = require('mongodb').MongoClient;
 
 const app = express();
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 app.use(express.json());
 var database;
+
+const options = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Node JS API Project using MongoDB',
+            version: '1.0.0'
+        },
+        servers: [
+            {
+                url: 'http://localhost:8080/'
+            }
+        ]
+    },
+    apis: ['./index.js']
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Buat Port untuk Koneksi untuk MongoDB
 app.listen(8080, () => {
