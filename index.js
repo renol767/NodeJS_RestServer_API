@@ -1,69 +1,74 @@
 const express = require("express");
+const MongoClient = require('mongodb').MongoClient;
 
 const app = express();
 
 app.use(express.json());
+var database;
 
-// Data Dummy
-const books = [
-    {
-        id: 1,
-        title: 'Java Programming',
-    },
-    {
-        id: 2,
-        title: 'C# Programming'
-    },
-    {
-        id: 3,
-        title: 'NodeJS Programming'
-    }
-]
+// Buat Port untuk Koneksi untuk MongoDB
+app.listen(8080, () => {
+    MongoClient.connect('mongodb://localhost:27017', { useNewUrlParser: true }, (error, results) => {
+        if (error) throw error
+        database = results.db('dbbook');
+        console.log('Connection Successfull');
+    });
+})
 
-app.get('/', (req, resp) => {
-    resp.send('Welcome to my API');
-});
-
-// Get API using Data Dummy
+// GET Method
 app.get('/api/books', (req, resp) => {
-    resp.send(books);
+    database.collection('books').find({}).toArray((err, results) => {
+        if (err) throw err
+        resp.send(results);
+    });
 });
 
-// Get API using Data Dummy and Parameters
+// GET Method using Params
 app.get('/api/books/:id', (req, resp) => {
-    const book = books.find(a => a.id === parseInt(req.params.id));
-    if (!book) resp.status(404).send('Books not found');
-    resp.send(book);
+    database.collection('books').find({id: parseInt(req.params.id)}).toArray((err, results) => {
+        if (err) throw err
+        resp.send(results);
+    });
 });
 
-// Post Request
+// POST Method
 app.post('/api/books/addBook', (req, resp) => {
-    const book = {
-        id: books.length + 1,
+    let res = database.collection('books').find({}).sort({ id: -1 }).limit(1);
+    res.forEach(obj => {
+        if (obj) {
+            let book = {
+                id: obj.id + 1,
+                title: req.body.title
+            }
+            database.collection('books').insertOne(book, (err, results) => {
+                if (err) resp.status(500).send(err);
+                resp.send('Added Successfully');
+            })
+        }
+    });
+});
+
+// PUT Method
+app.put('/api/books/:id', (req, resp) => {
+    let query = { id: parseInt(req.params.id) };
+    let book = {
+        id: parseInt(req.params.id),
         title: req.body.title
     }
-    books.push(book);
-    resp.send(book);
+    let dataSet = {
+        $set: book
+    }
+    database.collection('books').updateOne(query, dataSet, (err, results) => {
+        if (err) throw err
+        resp.send(book);
+    });
 });
 
-// Put Request
-app.put('/api/books/:id', (req, resp) => {
-    const book = books.find(a => a.id === parseInt(req.params.id));
-    if (!book) resp.status(404).send('Books not found');
-
-    book.title = req.body.title;
-
-    resp.send(book);
-});
-
-// Delete Request
+// DELETE Method
 app.delete('/api/books/:id', (req, resp) => {
-    const book = books.find(a => a.id === parseInt(req.params.id));
-    if (!book) resp.status(404).send('Books not found');
-
-    const index = books.indexOf(book);
-    books.splice(index, 1);
-    resp.send(book);
+    database.collection('books').deleteOne({ id: parseInt(req.params.id) }, (err, results) => {
+        if (err) throw err
+        resp.send('Books is Deleted');
+    });
 });
 
-app.listen(8080);
