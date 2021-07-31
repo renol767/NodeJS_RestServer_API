@@ -20,9 +20,9 @@ const books = [
     }
 ]
 
-app.get('/', (req, resp) => {
-    resp.send('Welcome to my API');
-});
+// app.get('/', (req, resp) => {
+//     resp.send('Welcome to my API');
+// });
 
 // Get API using Data Dummy
 app.get('/api/example', (req, resp) => {

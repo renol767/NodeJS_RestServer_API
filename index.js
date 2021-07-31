@@ -36,6 +36,53 @@ app.listen(8080, () => {
     });
 })
 
+/**
+ * @swagger
+ * components:
+ *      schemas:
+ *          Book:
+ *              type: object
+ *              properties:
+ *                  id:
+ *                      type: integer
+ *                  title:
+ *                      type: string
+ */
+
+// Swagget for Get Method 'localhost:8080/'
+/**
+ * @swagger
+ * /:
+ *  get:
+ *      summary: This api is used to check if get method is working or not
+ *      description: This api is used to check if get method is working or not
+ *      responses:
+ *          200:
+ *              description: To Test get Method. If Response Body Welcome to my API using MongoDB, the get method works 
+ */
+
+app.get('/', (req, resp) => {
+    resp.send('Welcome to my API using MongoDB')
+})
+
+// Swagget for GET Method 'localhost:8080/api/books'
+/**
+ * @swagger
+ * /api/books:
+ *  get:
+ *      summary: To get all books from MongoDB
+ *      description: This api is used to fetch data from MongoDB
+ *      responses:
+ *          200:
+ *              description: To Test get Method. this api is used to fetch data from MongoDB
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#components/schemas/Book'
+ */
+
 // GET Method
 app.get('/api/books', (req, resp) => {
     database.collection('books').find({}).toArray((err, results) => {
@@ -44,6 +91,31 @@ app.get('/api/books', (req, resp) => {
     });
 });
 
+// Swagget for GET Method 'localhost:8080/api/books/:id'
+/**
+ * @swagger
+ * /api/books/{id}:
+ *  get:
+ *      summary: To get all books from MongoDB
+ *      description: This api is used to fetch data from MongoDB
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          description: Numeric ID required
+ *          schema:
+ *              type: integer
+ *      responses:
+ *          200:
+ *              description: To Test get Method. this api is used to fetch data from MongoDB
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#components/schemas/Book'
+ */
+
 // GET Method using Params
 app.get('/api/books/:id', (req, resp) => {
     database.collection('books').find({id: parseInt(req.params.id)}).toArray((err, results) => {
@@ -51,6 +123,24 @@ app.get('/api/books/:id', (req, resp) => {
         resp.send(results);
     });
 });
+
+// Swagget for POST Method 'localhost:8080/api/books/addBook'
+/**
+ * @swagger
+ * /api/books/addBook:
+ *  post:
+ *      summary: used to insert data to MongoDB
+ *      description: This api is used to insert data to MongoDB
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#components/schemas/Book'
+ *      responses:
+ *          200:
+ *              description: Added Successfully
+ */
 
 // POST Method
 app.post('/api/books/addBook', (req, resp) => {
